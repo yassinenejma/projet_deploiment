@@ -1,10 +1,7 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd backend && npm install"
-nixpacksConfigPath = "nixpacks.toml"
 
 [deploy]
 startCommand = "cd backend && npm start"
 healthcheckPath = "/"
-healthcheckTimeout = 100
 restartPolicyType = "always" 
