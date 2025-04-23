@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
+const API_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://votre-backend-url.herokuapp.com/api' 
+  : 'http://localhost:5000/api';
+
 const App = () => {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -17,7 +21,7 @@ const App = () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await axios.get('http://localhost:5000/api/items');
+            const response = await axios.get(`${API_URL}/items`);
             setItems(response.data);
         } catch (err) {
             setError('Erreur lors du chargement des données');
@@ -36,10 +40,10 @@ const App = () => {
         e.preventDefault();
         try {
             if (editingItem) {
-                await axios.put(`http://localhost:5000/api/items/${editingItem._id}`, formData);
+                await axios.put(`${API_URL}/items/${editingItem.id}`, formData);
                 setEditingItem(null);
             } else {
-                await axios.post('http://localhost:5000/api/items', formData);
+                await axios.post(`${API_URL}/items`, formData);
             }
             setFormData({ name: '', description: '' });
             fetchItems();
@@ -57,7 +61,7 @@ const App = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/items/${id}`);
+                await axios.delete(`${API_URL}/items/${id}`);
                 fetchItems();
             } catch (err) {
                 setError('Erreur lors de la suppression');
@@ -132,7 +136,7 @@ const App = () => {
             ) : (
                 <ul className="items-list">
                     {items.map((item) => (
-                        <li key={item._id} className="item-card">
+                        <li key={item.id} className="item-card">
                             <div className="item-content">
                                 <strong>{item.name}</strong>
                                 <p>{item.description}</p>
@@ -141,7 +145,7 @@ const App = () => {
                                 <button onClick={() => handleEdit(item)} className="edit-button">
                                     Modifier
                                 </button>
-                                <button onClick={() => handleDelete(item._id)} className="delete-button">
+                                <button onClick={() => handleDelete(item.id)} className="delete-button">
                                     Supprimer
                                 </button>
                             </div>
